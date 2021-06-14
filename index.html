@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sample Map</title>
+
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet" />
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
+    <!-- MDB -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.5.0/mdb.min.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="css/nav.css">
+
+    <!-- Load Leaflet from CDN -->
+    <link rel="stylesheet" href="css/leaflet.css" />
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+        integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+        crossorigin=""></script>
+
+    <!-- Load Esri Leaflet from CDN -->
+    <script src="https://unpkg.com/esri-leaflet@3.0.2/dist/esri-leaflet.js"
+        integrity="sha512-myckXhaJsP7Q7MZva03Tfme/MSF5a6HC2xryjAM4FxPLHGqlh5VALCbywHnzs2uPoF/4G/QVXyYDDSkp5nPfig=="
+        crossorigin=""></script>
+    <script src='https://npmcdn.com/@turf/turf/turf.min.js'></script>
+</head>
+
+<style>
+    #map {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        z-index: -999;
+    }
+</style>
+
+<body>
+    <!-- Navbar -->
+    <nav id="map-feature" class="navbar navbar-expand-lg navbar-light bg-light">
+        <!-- Container wrapper -->
+        <div class="container-fluid">
+            <!-- Right elements -->
+            <div class="d-flex align-items-center">
+                <a onclick="ZoomIn()"><i class="fas fa-search-plus"></i></a>
+                <a onclick="ZoomOut()"><i class="fas fa-search-minus"></i></a>
+                <a id="fitbound"><i class="fas fa-expand-arrows-alt"></i></a>
+                <div class="vl" style="height: 25px;width: 0px;"></div>
+                <div class="col-auto my-1">
+                    <select class="custom-select mr-sm-2" id="inlineFormCustomSelect">
+                        <option value="Topographic">Topographic</option>
+                        <option value="Streets">Streets</option>
+                        <option value="NationalGeographic">National Geographic</option>
+                        <option value="Oceans">Oceans</option>
+                        <option value="Gray">Gray</option>
+                        <option value="DarkGray">Dark Gray</option>
+                        <option value="Imagery">Imagery</option>
+                        <option value="ImageryClarity">Imagery (Clarity)</option>
+                        <option value="ImageryFirefly">Imagery (Firefly)</option>
+                        <option value="ShadedRelief">Shaded Relief</option>
+                        <option value="Physical">Physical</option>
+                    </select>
+                </div>
+                <div class="col-auto my-1">
+                    <select class="custom-select mr-sm-2" id="inlineFormCustomSelect" disabled>
+                        <option selected>Fly to......</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div id="map-properties" class="navbar navbar-expand-lg navbar-light bg-light">
+        <form>
+            <input type="checkbox" name="check" id="removelayer" checked="true"> Chectbox
+        </form>
+    </div>
+
+    <div id="map"></div>
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.5.0/mdb.min.js"></script>
+    <script src="js/basemap.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.js"
+        integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+    <script src="js/index.js"></script>
+
+</body>
+
+</html>
