@@ -39,6 +39,9 @@
         left: 0;
         z-index: -999;
     }
+    form {
+        font-size:12px;
+    } 
 </style>
 
 <body>
@@ -68,11 +71,8 @@
                     </select>
                 </div>
                 <div class="col-auto my-1">
-                    <select class="custom-select mr-sm-2" id="inlineFormCustomSelect" disabled>
-                        <option selected>Fly to......</option>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
+                    <select class="custom-select mr-sm-2" id="inlineFormCustomSelectCountry">
+                        <option selected>Select Country</option>
                     </select>
                 </div>
             </div>
@@ -81,7 +81,7 @@
 
     <div id="map-properties" class="navbar navbar-expand-lg navbar-light bg-light">
         <form>
-            <input type="checkbox" name="check" id="removelayer" checked="true"> Chectbox
+            <input type="checkbox" name="check" id="removelayer" checked="true"> Hide/Show Point
         </form>
     </div>
 

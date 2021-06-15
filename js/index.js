@@ -15,7 +15,13 @@ let polyStyleOnclick = {
     dashArray: '',
     fillOpacity: 0.7
 }
-
+let byX = {
+    weight: 5,
+    fillColor: '#37991e',
+    color:'#1d3557',
+    dashArray: '',
+    fillOpacity: 0.7
+}
 let geojsonMarkerOptions = {
     radius: 5,
     fillColor: "#e63946",
@@ -26,7 +32,7 @@ let geojsonMarkerOptions = {
 };
 
 let iconImage = {
-    iconUrl: 'assets/icon/pin.png',
+    iconUrl: 'assets/icon/gold-medal.png',
     iconSize: [25, 25], // width and height of the image in pixels
     shadowSize: [35, 20], // width, height of optional shadow image
     iconAnchor: [15, 15], // point of the icon which will correspond to marker's location
@@ -62,6 +68,7 @@ $.when(countryGeo, pointGeo).done(() => {
     let OnClickFeature = e => {
         if (lastClickedLayer !== null) {
             lastClickedLayer.setStyle(polyStyle);
+           
         }
 
         map.fitBounds(e.target.getBounds());
@@ -108,10 +115,6 @@ $.when(countryGeo, pointGeo).done(() => {
 
     map.fitBounds(geojson.getBounds())
 
-    document.getElementById('fitbound').onclick = function () {
-        map.fitBounds(geojson.getBounds())
-        lastClickedLayer.setStyle(polyStyle)
-    }
     document.getElementById('removelayer').onclick = function () {
         if (!this.checked) {
             map.removeLayer(geojsonPoint)
@@ -119,4 +122,53 @@ $.when(countryGeo, pointGeo).done(() => {
             map.addLayer(geojsonPoint)
         }
     }
+
+    let filcount = countrylayer.features.map(a =>{
+        return a.properties.name
+    })
+
+    let dropdown = document.getElementById('inlineFormCustomSelectCountry')
+
+    for(let i in filcount){
+        let opt = document.createElement('option')
+        opt.value = filcount[i]
+        opt.innerHTML = filcount[i]
+        dropdown.appendChild(opt)
+    }
+    
+    let newLayer = null
+    document.getElementById('inlineFormCustomSelectCountry').onchange = function() {
+        if (lastClickedLayer !== null) {
+            lastClickedLayer.setStyle(polyStyle);
+        }
+
+        if (newLayer !== null) {
+            newLayer.setStyle(polyStyle);
+            map.removeLayer(newLayer)
+        }
+       
+        let countFilter = countrylayer.features.filter(a => {
+            return a.properties.name == this.value
+        })
+
+        let geojson = L.geoJSON(countFilter,{
+            onEachFeature: onEachFeature,
+            style:byX
+        })
+       
+        newLayer = geojson
+
+        lastClickedLayer = geojson;
+
+        newLayer.setStyle(byX)
+
+        map.fitBounds(geojson.getBounds())
+        map.addLayer(geojson)
+    }
+    document.getElementById('fitbound').onclick = function () {
+        map.fitBounds(geojson.getBounds())
+        lastClickedLayer.setStyle(polyStyle)
+        newLayer.setStyle(polyStyle)
+    }
+    // console.log(j)
 })

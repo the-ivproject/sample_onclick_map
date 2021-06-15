@@ -42,7 +42,7 @@ h6 {
   ;
 }
 
-#inlineFormCustomSelect {
+#inlineFormCustomSelect, #inlineFormCustomSelectCountry {
   font-size: 12px !important;
   padding: 4px;
   width: 130px;
@@ -147,7 +147,7 @@ h6 {
   border-radius: 4px;
   margin: 15px;
   border-left: 4px solid #3a0ca3;
-  padding: 20px;
+  padding: 10px;
 
 }
 
