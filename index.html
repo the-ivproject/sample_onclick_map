@@ -1,62 +1,69 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sample Map</title>
-
+    <meta charset="utf-8" />
+    <title>A simple map</title>
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet" />
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
     <!-- MDB -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.5.0/mdb.min.css" rel="stylesheet" />
-
-    <link rel="stylesheet" href="css/nav.css">
-
-    <!-- Load Leaflet from CDN -->
-    <link rel="stylesheet" href="css/leaflet.css" />
-
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
-        integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
-        crossorigin=""></script>
-
-    <!-- Load Esri Leaflet from CDN -->
-    <script src="https://unpkg.com/esri-leaflet@3.0.2/dist/esri-leaflet.js"
-        integrity="sha512-myckXhaJsP7Q7MZva03Tfme/MSF5a6HC2xryjAM4FxPLHGqlh5VALCbywHnzs2uPoF/4G/QVXyYDDSkp5nPfig=="
-        crossorigin=""></script>
+    <link rel="stylesheet" href="css/nav.css" />
+    <link rel="stylesheet" href="css/index.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@0.7.7/dist/leaflet.css" />
+    <link rel="stylesheet" type="text/css"
+        href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/0.4.0/MarkerCluster.css" />
+    <link rel="stylesheet" type="text/css"
+        href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/0.4.0/MarkerCluster.Default.css" />
+    <script type='text/javascript'
+        src='https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/0.4.0/leaflet.markercluster.js'></script>
     <script src='https://npmcdn.com/@turf/turf/turf.min.js'></script>
+
+    <style>
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            right: 0;
+            left: 0;
+            z-index: -999;
+        }
+
+        form {
+            font-size: 12px;
+        }
+
+        input[type=checkbox] {
+            vertical-align: middle;
+            position: relative;
+            bottom: 1px;
+        }
+
+        label {
+            font-family: 'Roboto';
+            font-weight: 500;
+            padding-right: 5px;
+        }
+    </style>
 </head>
 
-<style>
-    #map {
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        right: 0;
-        left: 0;
-        z-index: -999;
-    }
-    form {
-        font-size:12px;
-    } 
-</style>
-
 <body>
+
     <!-- Navbar -->
     <nav id="map-feature" class="navbar navbar-expand-lg navbar-light bg-light">
         <!-- Container wrapper -->
         <div class="container-fluid">
             <!-- Right elements -->
             <div class="d-flex align-items-center">
-                <a onclick="ZoomIn()"><i class="fas fa-search-plus"></i></a>
-                <a onclick="ZoomOut()"><i class="fas fa-search-minus"></i></a>
+                <a id="ZoomIn"><i class="fas fa-search-plus"></i></a>
+                <a id="ZoomOut"><i class="fas fa-search-minus"></i></a>
                 <a id="fitbound"><i class="fas fa-expand-arrows-alt"></i></a>
                 <div class="vl" style="height: 25px;width: 0px;"></div>
                 <div class="col-auto my-1">
-                    <select class="custom-select mr-sm-2" id="inlineFormCustomSelect">
+                    <select class="custom-select mr-sm-2" id="inlineFormCustomSelect" disabled>
                         <option value="Topographic">Topographic</option>
                         <option value="Streets">Streets</option>
                         <option value="NationalGeographic">National Geographic</option>
@@ -81,18 +88,314 @@
 
     <div id="map-properties" class="navbar navbar-expand-lg navbar-light bg-light">
         <form>
-            <input type="checkbox" name="check" id="removelayer" checked="true"> Hide/Show Point
+            <input type="checkbox" name="check" id="removelayer" checked="true"> <label for="check"> Gold</label>
+            <input type="checkbox" name="checkSnow" id="removelayerSnow" checked="true"> <label for="checkSnow">
+                Snowflake</label>
         </form>
     </div>
 
     <div id="map"></div>
 
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.5.0/mdb.min.js"></script>
-    <script src="js/basemap.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.js"
-        integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
-    <script src="js/index.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 
+    <script type='text/javascript' src='http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js'></script>
+    <script type='text/javascript'
+        src='http://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/0.4.0/leaflet.markercluster.js'></script>
+    <script>
+        const country = 'assets/countryBorders.geo.json'
+        const point = 'assets/sumOlympics.geo.json'
+        const snowflake = 'assets/winOlympics.geo.json'
+
+        let polyStyle = {
+            fillColor: '#001d3d',
+            fillOpacity: 0.9,
+            weight:1,
+            color: 'white',
+            opacity: 1
+        }
+
+        let polyStyleOnclick = {
+            weight: 5,
+            color: '#fee440',
+            dashArray: '',
+            fillOpacity: 0.7
+        }
+
+        let defaultDropdownStyle = {
+            weight: 5,
+            color: '#fee440',
+            dashArray: '',
+            fillOpacity: 0.1
+        }
+
+        let geojsonMarkerOptions = {
+            radius: 5,
+            fillColor: "#e63946",
+            color: "#000",
+            weight: 1,
+            opacity: 1,
+            fillOpacity: 1
+        };
+
+        let iconImage = {
+            iconUrl: 'assets/icon/gold-medal.png',
+            iconSize: [30, 30], // width and height of the image in pixels
+            shadowSize: [35, 20], // width, height of optional shadow image
+            iconAnchor: [15, 15], // point of the icon which will correspond to marker's location
+            shadowAnchor: [12, 6], // anchor point of the shadow. should be offset
+            popupAnchor: [0, 0] // point from which the popup should open relative to the iconAnchor
+        }
+
+        let iconImageSnow = {
+            iconUrl: 'assets/icon/snowflake.png',
+            iconSize: [30, 30], // width and height of the image in pixels
+            shadowSize: [35, 20], // width, height of optional shadow image
+            iconAnchor: [15, 15], // point of the icon which will correspond to marker's location
+            shadowAnchor: [12, 6], // anchor point of the shadow. should be offset
+            popupAnchor: [0, 0] // point from which the popup should open relative to the iconAnchor
+        }
+        var countryGeo = $.ajax({
+            url: country,
+            dataType: "json",
+            success: console.log("County data successfully loaded."),
+            error: function (xhr) {
+                alert(xhr.statusText)
+            }
+        })
+
+        var pointGeo = $.ajax({
+            url: point,
+            dataType: "json",
+            success: console.log("County data successfully loaded."),
+            error: function (xhr) {
+                alert(xhr.statusText)
+            }
+        })
+
+        let pointGeoSnow = $.ajax({
+            url: snowflake,
+            dataType: "json",
+            success: console.log("Point data successfully loaded."),
+            error: function (xhr) {
+                alert(xhr.statusText)
+            }
+        })
+
+        $.when(countryGeo, pointGeo, pointGeoSnow).done(function () {
+            var Esri_WorldStreetMap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+                attribution: 'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012'
+            });
+            document.getElementById('ZoomIn').onclick = function () {
+                map.zoomIn()
+            }
+            document.getElementById('ZoomOut').onclick = function () {
+                map.zoomOut()
+            }
+
+            let countrylayer = countryGeo.responseJSON
+            let pointlayer = pointGeo.responseJSON
+            let pointlayerSnow = pointGeoSnow.responseJSON
+
+            let map = L.map('map', {
+                center: [39.73, -104.99],
+                zoom: 10,
+                zoomControl:false,
+                layers: [Esri_WorldStreetMap]
+            });
+
+            let lastClickedLayer = null
+            let newLayer = null
+            let OnClickFeature = e => {
+                if (lastClickedLayer !== null) {
+                    lastClickedLayer.setStyle(polyStyle);
+
+                }
+                if (newLayer !== null) {
+                    map.removeLayer(newLayer)
+                }
+
+                map.fitBounds(e.target.getBounds());
+                let countrylayer = e.target;
+
+                lastClickedLayer = countrylayer;
+
+                countrylayer.setStyle(polyStyleOnclick);
+
+                let popup = L.popup()
+                    .setContent(`Country: ${countrylayer.feature.properties.name}`);
+
+                countrylayer.bindPopup(popup).openPopup();
+            }
+
+            function onEachFeature(feature, layer) {
+                layer.on({
+                    click: OnClickFeature
+                });
+            }
+
+            let circleStyle = (feature, latlng) => {
+                return L.circleMarker(latlng, geojsonMarkerOptions);
+            }
+
+            let IconImage = (feature, latlng) => {
+                let myIcon = L.icon(iconImage)
+                return L.marker(latlng, {
+                    icon: myIcon
+                })
+            }
+
+            let IconImageSnow = (feature, latlng) => {
+                let myIcon = L.icon(iconImageSnow)
+                return L.marker(latlng, {
+                    icon: myIcon
+                })
+            }
+
+            let geojson = L.geoJson(countrylayer, {
+                onEachFeature: onEachFeature,
+                style: polyStyle
+            })
+            map.addLayer(geojson)
+            let geojsonPoint = L.geoJson(pointlayer, {
+                pointToLayer: IconImage
+            })
+
+            let geojsonPointSnow = L.geoJson(pointlayerSnow, {
+                pointToLayer: IconImageSnow
+            })
+
+            let markers = L.markerClusterGroup({
+                spiderfyOnMaxZoom: true,
+                removeOutsideVisibleBounds: false,
+                disableClusteringAtZoom: 8,
+                showCoverageOnHover: false,
+                maxClusterRadius: 40,
+                animateAddingMarkers: true,
+                iconCreateFunction: cluster => {
+                    let markers = cluster.getAllChildMarkers();
+                    let first = iconImage.iconUrl
+                    let html =
+                        `<img class="first-icon-cluster" src="${first}"></img><div class="circleGold">${markers.length}</div>`;
+                    return L.divIcon({
+                        html: html,
+                        className: 'mycluster',
+                        iconSize: L.point(10, 10)
+                    });
+                },
+            });
+
+            let markersSnow = L.markerClusterGroup({
+                spiderfyOnMaxZoom: true,
+                removeOutsideVisibleBounds: false,
+                disableClusteringAtZoom: 8,
+                showCoverageOnHover: false,
+                maxClusterRadius: 70,
+                animateAddingMarkers: true,
+                iconCreateFunction: cluster => {
+                    let markers = cluster.getAllChildMarkers();
+                    let first = iconImageSnow.iconUrl
+                    console.log(markers)
+                    let html =
+                        `<img class="first-icon-cluster" src="${first}"></img><div class="circleSnow">${markers.length}</div>`;
+                    return L.divIcon({
+                        html: html,
+                        className: 'mycluster',
+                        iconSize: L.point(10, 10)
+                    });
+                },
+            });
+
+            markers.addLayer(geojsonPoint)
+            markersSnow.addLayer(geojsonPointSnow)
+
+            map.addLayer(markers)
+            map.addLayer(markersSnow)
+            map.fitBounds(geojson.getBounds())
+
+            document.getElementById('removelayer').onclick = function () {
+                if (!this.checked) {
+                    if (map.hasLayer(geojsonPoint)) {
+                        map.removeLayer(geojsonPoint)
+                    } else {
+                        map.removeLayer(markers)
+                    }
+                } else {
+                    if (map.hasLayer(geojsonPoint)) {
+                        map.addLayer(geojsonPoint)
+                    } else {
+                        map.addLayer(markers)
+                    }
+
+                }
+            }
+            document.getElementById('removelayerSnow').onclick = function () {
+                if (!this.checked) {
+                    if (map.hasLayer(geojsonPointSnow)) {
+                        map.removeLayer(geojsonPointSnow)
+                    } else {
+                        map.removeLayer(markersSnow)
+                    }
+                } else {
+                    if (map.hasLayer(geojsonPointSnow)) {
+                        map.addLayer(geojsonPointSnow)
+                    } else {
+                        map.addLayer(markersSnow)
+                    }
+
+                }
+            }
+
+            let filcount = countrylayer.features.map(a => {
+                return a.properties.name
+            })
+
+            filcount.sort()
+
+            let dropdown = document.getElementById('inlineFormCustomSelectCountry')
+
+            for (let i in filcount) {
+                let opt = document.createElement('option')
+                opt.value = filcount[i]
+                opt.innerHTML = filcount[i]
+                dropdown.appendChild(opt)
+            }
+
+            document.getElementById('inlineFormCustomSelectCountry').onchange = function () {
+                if (lastClickedLayer !== null) {
+                    lastClickedLayer.setStyle(polyStyle);
+                }
+
+                if (newLayer !== null) {
+                    newLayer.setStyle(polyStyle);
+                    map.removeLayer(newLayer)
+                }
+
+                let countFilter = countrylayer.features.filter(a => {
+                    return a.properties.name == this.value
+                })
+
+                let geojson = L.geoJson(countFilter, {
+                    onEachFeature: onEachFeature,
+
+                })
+
+                newLayer = geojson
+
+                lastClickedLayer = geojson;
+
+                newLayer.setStyle(defaultDropdownStyle)
+
+                map.fitBounds(geojson.getBounds())
+                map.addLayer(geojson)
+            }
+
+            document.getElementById('fitbound').onclick = function () {
+                map.fitBounds(geojson.getBounds())
+                lastClickedLayer.setStyle(polyStyle)
+                newLayer.setStyle(polyStyle)
+            }
+        });
+    </script>
 </body>
 
 </html>

@@ -1,0 +1,66 @@
+* {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+}
+
+#map {
+    width: 100%;
+    height: 100%;
+    /* z-index: 999; */
+    position: absolute;
+}
+.first-icon-cluster {
+    width: 25px;
+    position: absolute;
+    z-index: -888;
+    bottom:-12px;
+    right: -10px;
+}
+
+.circleGold {
+    width: 18px;
+    height: 18px;
+    line-height: 18px;
+    text-align: center;
+    background-color: red;
+    color: white;
+    font-family: 'Roboto';
+    font-weight: bold;
+    font-size: 10px;
+    border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
+    margin: 5px;
+}
+
+.circleSnow {
+    width: 18px;
+    height: 18px;
+    line-height: 18px;
+    text-align: center;
+    background-color: blue;
+    color: white;
+    font-family: 'Roboto';
+    font-weight: bold;
+    font-size: 10px;
+    border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
+    margin: 5px;
+}
+
+.img-popup {
+    float: left;
+    width: 50px;
+    margin-right: 10px;
+}
+p {
+    margin: 0 !important;
+}
+
+.leaflet-popup-content {
+    margin: auto;
+    padding:10px;
+}
+
+.leaflet-top .leaflet-left {
+    display: none !important;
+}

@@ -1,4 +1,10 @@
-const map = L.map('map', null, { zoomControl:true }).setView([43.329, -88.161]);
+// const map = L.map('map', null, { zoomControl:true }).setView([43.329, -88.161]);
+
+let map = L.map('map',null, {
+    center: [39.73, -104.99],
+    zoom: 10,
+});
+
 let layer = L.esri.basemapLayer('Topographic').addTo(map);
 let layerLabels;
 
@@ -36,13 +42,6 @@ basemaps.addEventListener('change', function () {
     setBasemap(basemaps.value);
 });
 
-    
-function ZoomIn() {
-    map.zoomIn();
-}
 
-function ZoomOut() {
-    map.zoomOut();
-}
 
 
